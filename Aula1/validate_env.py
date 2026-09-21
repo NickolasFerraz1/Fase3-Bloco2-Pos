@@ -1,5 +1,4 @@
 import sys
-
 def main():
     print("Iniciando validação de ambiente")
 
