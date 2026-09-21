@@ -20,14 +20,25 @@ jobs:
         steps:
           - name: Checkout repository
             uses: actions/checkout@v4 #basicamente um git clone para o github
+          
           - name: Install Python
             uses: actions/setup-python@v6
             with:
               python-version: ${{ env.PYTHON_VERSION }}
+          
           - name: Run script validation
             run: python Aula2/validate_env.py
+
+          - name: Install nbstripout
+            run: pip install nbstripout
+
+          - name: Analyze Jupyter Notebooks
+            run: |
+              nbstripout --verify Aula2/explorer.ipynb || echo "Jupyter Notebook contains output cells. Please remove them before committing."
+
           - name: Instalar Ruff (Linter)
             run: pip install ruff 
+
           - name: Run Linter
             run: ruff check .
             
