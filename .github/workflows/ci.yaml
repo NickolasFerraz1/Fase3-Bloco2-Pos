@@ -21,10 +21,14 @@ jobs:
           - name: Checkout repository
             uses: actions/checkout@v4 #basicamente um git clone para o github
           
+          - name: Install Poetry
+            run: pip install poetry
+
           - name: Install Python
             uses: actions/setup-python@v6
             with:
               python-version: ${{ env.PYTHON_VERSION }}
+              cache: 'poetry'
           
           - name: Run script validation
             run: python Aula2/validate_env.py
@@ -45,3 +49,6 @@ jobs:
           - name: Run Linter
             run: ruff check .
             
+          - name: Install dependencies - Poetry
+            run: poetry install
+            working-directory: ./Aula2
