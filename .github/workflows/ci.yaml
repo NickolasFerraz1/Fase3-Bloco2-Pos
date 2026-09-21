@@ -18,13 +18,13 @@ jobs:
     validacao_ambiente: 
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout repository
-                uses: actions/checkout@v4 #basicamente um git clone para o github
-            - name: Install Python
-                uses: actions/setup-python@v6
-                with:
-                    python-version: ${{ env.PYTHON_VERSION }}
-            - name: Run script validation
-                run: python Aula1/validate_env.py
+          - name: Checkout repository
+            uses: actions/checkout@v4 #basicamente um git clone para o github
+          - name: Install Python
+            uses: actions/setup-python@v6
+            with:
+              python-version: ${{ env.PYTHON_VERSION }}
+          - name: Run script validation
+            run: python Aula1/validate_env.py
 
             
