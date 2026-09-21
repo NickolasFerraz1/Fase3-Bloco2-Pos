@@ -25,6 +25,9 @@ jobs:
             with:
               python-version: ${{ env.PYTHON_VERSION }}
           - name: Run script validation
-            run: python Aula1/validate_env.py
-
+            run: python Aula2/validate_env.py
+          - name: Instalar Ruff (Linter)
+            run: pip install ruff 
+          - name: Run Linter
+            run: ruff check .
             
