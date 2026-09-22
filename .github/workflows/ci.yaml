@@ -41,7 +41,9 @@ jobs:
                 }
 
           - name: Instalar Ruff (Linter)
-            run: pip install ruff 
+            # Versão fixa (mesma travada nos poetry.lock das aulas), para não
+            # divergir do que roda localmente quando o Ruff lançar versões novas
+            run: pip install ruff==0.4.10
 
           - name: Run Linter
             run: ruff check .
