@@ -13,6 +13,11 @@ def main():
         X = df.drop('target', axis=1)
         y = df['target']
 
+        # Converte colunas de texto (ex.: feature2) em colunas numéricas 0/1
+        X = pd.get_dummies(X)
+        # Preenche valores ausentes nas colunas numéricas com a média da coluna
+        X = X.fillna(X.mean(numeric_only=True))
+
         clf = DecisionTreeClassifier(max_depth=3, random_state=42)
         clf.fit(X, y)
 
