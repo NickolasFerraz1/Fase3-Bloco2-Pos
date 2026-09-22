@@ -31,7 +31,7 @@ jobs:
               cache: 'poetry'
           
           - name: Run script validation
-            run: python Aula1/validate_env.py
+            run: python Aula2/validate_env.py
 
           - name: Install nbstripout
             run: pip install nbstripout
