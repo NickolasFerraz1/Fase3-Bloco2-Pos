@@ -49,3 +49,11 @@ jobs:
           - name: Install dependencies - Poetry
             run: poetry install
             working-directory: ./Aula2
+
+          - name: Rodar ETL 
+            run: poetry run python preparar_dados.py
+            working-directory: ./Aula3
+
+          - name : Dummy Training 
+            run: poetry run python dummy_train.py
+            working-directory: ./Aula3
