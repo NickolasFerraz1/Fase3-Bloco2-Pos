@@ -37,6 +37,7 @@ jobs:
             path: Aula3/dataset_processado.csv
   
   treinamento:
+    needs: preparando_dados # faz com que o job de treinamento só seja executado após a conclusão do job de preparação de dados
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
