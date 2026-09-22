@@ -1,0 +1,75 @@
+# Workflow 
+name: CI - MLOps
+
+# Conditions 
+on:
+    pull_request:
+        branches:
+            - main
+
+# Variables
+env: 
+    PYTHON_VERSION: '3.10'
+# Jobs
+jobs:
+    validacao_ambiente: 
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4 #basicamente um git clone para o github
+          
+          - name: Install Poetry
+            run: pip install poetry
+
+          - name: Install Python
+            uses: actions/setup-python@v6
+            with:
+              python-version: ${{ env.PYTHON_VERSION }}
+              cache: 'poetry'
+          
+          - name: Run script validation
+            run: python Aula1/validate_env.py
+
+          - name: Install nbstripout
+            run: pip install nbstripout
+
+          - name: Analyze Jupyter Notebooks
+            run: |
+                nbstripout --verify Aula2/explorer.ipynb || {
+                echo "::error file=Aula2/explorer.ipynb::Notebook contém células com output. Remova antes de commitar."
+                exit 1
+                }
+
+          - name: Instalar Ruff (Linter)
+            # Versão fixa (mesma travada nos poetry.lock das aulas), para não
+            # divergir do que roda localmente quando o Ruff lançar versões novas
+            run: pip install ruff==0.4.10
+
+          - name: Run Linter
+            run: ruff check .
+            
+          - name: Install dependencies - Poetry (Aula3)
+            run: poetry install
+            working-directory: ./Aula3
+
+          - name: Rodar ETL
+            run: poetry run python preparar_dados.py
+            working-directory: ./Aula3
+
+          - name : Dummy Training
+            run: poetry run python dummy_train.py
+            working-directory: ./Aula3
+
+          - name : Dummy Training Governance
+            env:
+              GITHUB_SHA: ${{ github.sha }}
+            run: poetry run python dummy_train_governance.py
+            working-directory: ./Aula3
+
+          - name: Install dependencies - Poetry (Aula4)
+            run: poetry install
+            working-directory: ./Aula4
+
+          - name: Tests (Pytest)
+            run: poetry run pytest tests/ -v
+            working-directory: ./Aula4
