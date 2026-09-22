@@ -3,9 +3,6 @@ name: CI - MLOps
 
 # Conditions 
 on:
-    push:
-        branches:
-            - main
     pull_request:
         branches:
             - main

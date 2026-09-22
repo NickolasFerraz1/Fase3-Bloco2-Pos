@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "mlops-pipeline-demo"
+version = "0.1.0"
+description = "Projeto prático de CI/CD para ML"
+authors = ["Nickolas"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pandas = "^2.2.0"
+scikit-learn = "^1.4.0"
+
+[tool.poetry.group.dev.dependencies]
+nbstripout = "^0.7.1"
+ruff = "^0.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

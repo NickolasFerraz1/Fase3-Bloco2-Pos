@@ -1,0 +1,55 @@
+name: Pipeline de Treinamento de ML
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  preparando_dados:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4 #basicamente um git clone para o github
+        
+        - name: Install Poetry
+          run: pip install poetry
+        
+        - name: Install Python Version ${{ env.PYTHON_VERSION }}
+          uses: actions/setup-python@v6
+          with:
+            python-version: ${{ env.PYTHON_VERSION }}
+            cache: 'poetry'
+        
+        - name: Install dependencies - Poetry
+          run: poetry install
+
+        - name: Run data preparation script (ETL)
+          run: poetry run python Aula3/preparar_dados.py
+
+        - name: Salvar dataset preparado como artefato
+          uses: actions/upload-artifact@v6
+          with:
+            name: dataset-processado
+            path: Aula3/dataset_processado.csv
+  
+  treinamento:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 #basicamente um git clone para o github
+      
+      - name: Download do Artefato do dataset processado
+        uses: actions/download-artifact@v6
+        with:
+          name: dataset-processado
+
+      - name: Verificar download artifact
+        run: |
+          echo: "Content of the downloaded artifact:"
+          ls -la
+          echo "Content of the dataset_processado.csv:"
+            cat dataset_processado.csv
