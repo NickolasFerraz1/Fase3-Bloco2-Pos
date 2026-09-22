@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
-from Aula4.api import app
 
+from Aula4.api import app
 
 client = TestClient(app)
 

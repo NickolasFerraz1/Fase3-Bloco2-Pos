@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-
 app = FastAPI(title="Aula 4 - FastAPI", version="0.1.0")
 
 # O Contrato de Entrada
