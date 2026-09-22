@@ -49,3 +49,7 @@ jobs:
           - name: Install dependencies - Poetry
             run: poetry install
             working-directory: ./Aula2
+
+          - name : Dummy Training 
+            run: poetry run python dummy_train.py
+            working-directory: ./Aula3
