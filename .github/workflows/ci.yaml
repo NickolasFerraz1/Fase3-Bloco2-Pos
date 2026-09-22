@@ -48,24 +48,28 @@ jobs:
           - name: Run Linter
             run: ruff check .
             
-          - name: Install dependencies - Poetry
+          - name: Install dependencies - Poetry (Aula3)
             run: poetry install
-            working-directory: ./Aula2
+            working-directory: ./Aula3
 
-          - name: Rodar ETL 
+          - name: Rodar ETL
             run: poetry run python preparar_dados.py
             working-directory: ./Aula3
 
-          - name : Dummy Training 
+          - name : Dummy Training
             run: poetry run python dummy_train.py
             working-directory: ./Aula3
 
           - name : Dummy Training Governance
-            env: 
+            env:
               GITHUB_SHA: ${{ github.sha }}
             run: poetry run python dummy_train_governance.py
             working-directory: ./Aula3
 
+          - name: Install dependencies - Poetry (Aula4)
+            run: poetry install
+            working-directory: ./Aula4
+
           - name: Tests (Pytest)
-            run: poetry run pytest tests/ -v 
+            run: poetry run pytest tests/ -v
             working-directory: ./Aula4
