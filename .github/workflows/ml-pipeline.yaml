@@ -26,9 +26,11 @@ jobs:
         
         - name: Install dependencies - Poetry
           run: poetry install
+          working-directory: ./Aula3
 
         - name: Run data preparation script (ETL)
           run: poetry run python Aula3/preparar_dados.py
+          working-directory: ./Aula3
 
         - name: Salvar dataset preparado como artefato
           uses: actions/upload-artifact@v6
@@ -50,7 +52,7 @@ jobs:
 
       - name: Verificar download artifact
         run: |
-          echo: "Content of the downloaded artifact:"
+          echo "Content of the downloaded artifact:"
           ls -la
           echo "Content of the dataset_processado.csv:"
-            cat dataset_processado.csv
+          cat dataset_processado.csv
