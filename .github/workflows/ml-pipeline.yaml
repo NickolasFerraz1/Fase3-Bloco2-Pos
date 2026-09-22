@@ -30,7 +30,6 @@ jobs:
 
         - name: Run data preparation script (ETL)
           run: poetry run python Aula3/preparar_dados.py
-          working-directory: ./Aula3
 
         - name: Salvar dataset preparado como artefato
           uses: actions/upload-artifact@v6
