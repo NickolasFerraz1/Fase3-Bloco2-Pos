@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "mlops-pipeline-demo"
+version = "0.1.0"
+description = "Projeto prático de CI/CD para ML"
+authors = ["Nickolas"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pandas = "^2.2.0"
+scikit-learn = "^1.4.0"
+fastapi = "^0.115.0"
+pydantic = "^2.9.0"
+
+[tool.poetry.group.dev.dependencies]
+nbstripout = "^0.7.1"
+ruff = "^0.4.0"
+pytest = "^8.0.0"
+httpx = "^0.27.0"
+
+[tool.pytest.ini_options]
+# Adiciona a raiz do repositório ao sys.path para que
+# "from Aula4.api import app" funcione mesmo rodando o pytest
+# de dentro da pasta Aula4 (como faz o ci.yaml, com working-directory: Aula4)
+pythonpath = [".."]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
