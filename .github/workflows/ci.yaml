@@ -63,3 +63,7 @@ jobs:
               GITHUB_SHA: ${{ github.sha }}
             run: poetry run python dummy_train_governance.py
             working-directory: ./Aula3
+
+          - name: Tests (Pytest)
+            run: poetry run pytest tests/ -v 
+            working-directory: ./Aula4
