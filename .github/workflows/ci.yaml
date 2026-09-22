@@ -57,3 +57,9 @@ jobs:
           - name : Dummy Training 
             run: poetry run python dummy_train.py
             working-directory: ./Aula3
+
+          - name : Dummy Training Governance
+            env: 
+              GITHUB_SHA: ${{ github.sha }}
+            run: poetry run python dummy_train_governance.py
+            working-directory: ./Aula3
