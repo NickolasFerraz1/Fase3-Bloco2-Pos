@@ -1,4 +1,4 @@
-name: CD - Build and Push Docker Image
+name: CD - Build and Push Docker Image!
 on:
   push:
     branches:
@@ -36,4 +36,4 @@ jobs:
           context: Aula5/
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          
+
