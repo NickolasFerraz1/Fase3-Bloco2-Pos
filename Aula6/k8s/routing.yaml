@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: VirtualService
+metadata:
+  name: anti-fraud-api
+spec:
+  hosts:
+    - anti-fraud-api
+  http:
+    - route:
+        #90% do tráfego vai para a versão 1
+        - destination:
+            host: anti-fraud-api
+            subset: v1
+          weight: 90
+        #10% do tráfego vai para a versão 2
+        - destination:
+            host: anti-fraud-api
+            subset: v2
+          weight: 10

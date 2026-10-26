@@ -37,4 +37,33 @@ jobs:
           context: Aula5/
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+  deploy-production:
+    needs: build-and-push
+    runs-on: ubuntu-latest
 
+    environment:
+      name: production
+      url: https://nickolas.com.br
+    
+    env:
+        API_ENV: "production"
+        LOG_LEVEL: "WARNING"
+        MODEL_TAG: ${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+    
+      - name: Atualizar imagem do deployment
+        run: |
+          # GHCR exige o nome da imagem em minúsculas (mesmo tratamento do job anterior)
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:${{ github.sha }}"
+          sed -i "s|image: nginx:latest|image: ${IMAGE}|g" Aula6/k8s/deployment.yaml
+          sed -i "s|\${API_ENV}|${API_ENV}|g" Aula6/k8s/deployment.yaml
+          sed -i "s|\${LOG_LEVEL}|${LOG_LEVEL}|g" Aula6/k8s/deployment.yaml
+    
+      - name: Deploy - Produção
+        run: |
+          echo "O arquivo YAML mutado que será enviado para nuvem"
+          cat Aula6/k8s/deployment.yaml
+          echo "Deploy Executado"
