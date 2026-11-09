@@ -52,6 +52,5 @@ O `teste.py` usa só a biblioteca padrão: lê o CSV, "treina" um modelo que sem
 - **Dados na Aula3:** o pipeline de ML usa o `pyproject.toml` e o `preparar_dados.py` da `Aula3/`, pois a `Aula7/` não tem esses arquivos.
 - **Treinamento simulado:** o `teste.py` não usa modelo real, serve apenas para validar o pipeline.
 - **Template em outro repositório:** o chamador usa `@main`. Mudanças no template só valem depois de commit e push na `main` do repositório `Fase3-Bloco2-Pos-Integracao`.
-- **`train.py` com erro:** `open(..., "wb", encoding="utf-8")` lança `ValueError`, porque o modo binário não aceita `encoding`. Basta remover o argumento.
-- **Caminho do modelo:** o CI roda `python Aula7/train.py` na raiz, e o script grava em `outputs/` relativo à pasta atual. O arquivo vai para `outputs/` na raiz, mas a auditoria procura em `Aula7/outputs/`. É preciso ajustar o caminho no `train.py` ou o `path-model`.
+- **`train.py` e o caminho do modelo:** o modo binário (`"wb"`) não aceita `encoding`, então esse argumento foi removido. O script grava em `Aula7/outputs/` com caminho relativo ao próprio arquivo (`Path(__file__).parent`), para a auditoria encontrar o `.pkl` mesmo rodando da raiz.
 - **Lint do CI:** rodando o ruff dentro de `Aula4/`, o pacote `Aula4` não é detectado como código do projeto. Por isso o `Aula4/pyproject.toml` ganhou `known-first-party = ["Aula4"]` em `[tool.ruff.lint.isort]`.
