@@ -73,3 +73,12 @@ jobs:
           - name: Tests (Pytest)
             run: poetry run pytest tests/ -v
             working-directory: ./Aula4
+
+          - name: Treinar modelo (pkl)
+            run: python Aula7/train.py
+
+          - name: Rodar Auditoria MLOps
+            uses: NickolasFerraz1/Fase3-Bloco2-Pos-Integracao@main
+            with:
+              path-model: Aula7/outputs/dataset_processado.pkl
+              nivel-alerta: 'WARNING'
