@@ -1,0 +1,15 @@
+name: CI Workflow Call
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci-workflow-call:
+    uses: NickolasFerraz1/Fase3-Bloco2-Pos-Integracao/.github/workflows/template-ci-ml.yml@main
+    with:
+      PYTHON_VERSION: '3.10'
+      path-tests: Aula4/tests/
+    secrets:
+      TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
