@@ -1,0 +1,115 @@
+name: Pipeline de Treinamento de ML
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Aula7/src/models/**'
+      - 'Aula3/pyproject.toml'
+      - 'Aula3/poetry.lock'
+      - '.github/workflows/ml-pipeline.yaml'
+      - 'Aula8/scripts/avaliar_desafiante.py'
+
+  repository_dispatch:
+    types:
+      - anomalia-detectada
+
+env:
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  anomalia-detect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recebendo o payload do Webhook
+        run: |
+          echo "Evento recebido de fora do Github!"
+          echo "Motivo: ${{ github.event.client_payload.motivo }}"
+          echo "Acurácia atual: ${{ github.event.client_payload.acuracia_atual }}"
+
+      - name: Iniciar Retreinamento
+        run: echo "Iniciando download dos dados novos e acionando instancias com GPU"
+  preparando_dados:
+    needs: anomalia-detect # faz com que o job de preparação de dados só seja executado após a conclusão do job de detecção de anomalias
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4 #basicamente um git clone para o github
+        
+        - name: Install Poetry
+          run: pip install poetry
+        
+        - name: Install Python Version ${{ env.PYTHON_VERSION }}
+          uses: actions/setup-python@v6
+          with:
+            python-version: ${{ env.PYTHON_VERSION }}
+            cache: 'poetry'
+            cache-dependency-path: Aula3/poetry.lock
+
+        - name: Install dependencies - Poetry
+          run: poetry install
+          working-directory: ./Aula3
+
+        - name: Run data preparation script (ETL)
+          run: poetry run python preparar_dados.py
+          working-directory: ./Aula3
+
+        - name: Salvar dataset preparado como artefato
+          uses: actions/upload-artifact@v6
+          with:
+            name: dataset-processado
+            path: Aula3/dataset_processado.csv
+  
+  treinamento:
+    needs: preparando_dados # faz com que o job de treinamento só seja executado após a conclusão do job de preparação de dados
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 #basicamente um git clone para o github
+      
+      - name: Download do Artefato do dataset processado
+        uses: actions/download-artifact@v6
+        with:
+          name: dataset-processado
+
+      - name: Verificar download artifact
+        run: |
+          echo "Content of the downloaded artifact:"
+          ls -la
+          echo "Content of the dataset_processado.csv:"
+          cat dataset_processado.csv
+
+      - name: Install Python Version ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Executar treinamento de teste
+        run: python Aula7/src/models/teste.py dataset_processado.csv
+
+      - name: Executar a Batalha (Champion vs Challenger)
+        run: python Aula8/scripts/avaliar_desafiante.py
+
+      - name: Ler o Relatório Markdown
+        id: relatorio
+        run: |
+          conteudo=$(cat Aula8/relatorio.md)
+          echo "BODY<<EOF" >> $GITHUB_ENV
+          echo "$conteudo" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Criar Pull Request no GitHub com o Relatório
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Novo modelo treinado - Atualização de Arquitetura"
+          title: "[BOT] Atualização do modelo de fraude (Challenger Venceu)"
+          body: ${{ env.BODY }}
+          branch: bot-pr-model
+          base: "main"
+          labels: "mlops, machine-learning, automated-pr"
