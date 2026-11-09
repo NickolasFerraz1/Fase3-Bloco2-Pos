@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Frontend de teste</title>
+</head>
+<body>
+  <h1>Frontend de teste</h1>
+  <p>Página de exemplo para validar que o ml-pipeline não dispara aqui.</p>
+  <button onclick="consultar()">Consultar backend</button>
+  <pre id="saida"></pre>
+  <script>
+    async function consultar() {
+      const r = await fetch("http://localhost:8000");
+      document.getElementById("saida").textContent = await r.text();
+    }
+  </script>
+</body>
+</html>

@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'Aula7/src/models/**'
+      - 'Aula3/pyproject.toml'
+      - 'Aula3/poetry.lock'
+      - '.github/workflows/ml-pipeline.yaml'
+
 
 env:
   PYTHON_VERSION: '3.10'
@@ -23,7 +29,8 @@ jobs:
           with:
             python-version: ${{ env.PYTHON_VERSION }}
             cache: 'poetry'
-        
+            cache-dependency-path: Aula3/poetry.lock
+
         - name: Install dependencies - Poetry
           run: poetry install
           working-directory: ./Aula3
@@ -56,3 +63,11 @@ jobs:
           ls -la
           echo "Content of the dataset_processado.csv:"
           cat dataset_processado.csv
+
+      - name: Install Python Version ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Executar treinamento de teste
+        run: python Aula7/src/models/teste.py dataset_processado.csv
