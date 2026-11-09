@@ -78,7 +78,7 @@ jobs:
             run: python Aula7/train.py
 
           - name: Rodar Auditoria MLOps
-            uses: NickolasFerraz1/Fase3-Bloco2-Pos-Integracao@main
+            uses: NickolasFerraz1/Fase3-Bloco2-Pos-Integracao/model-action@main
             with:
               path-model: Aula7/outputs/dataset_processado.pkl
               nivel-alerta: 'WARNING'

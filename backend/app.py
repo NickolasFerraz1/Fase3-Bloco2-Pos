@@ -1,7 +1,7 @@
 """Backend de exemplo, só para testar que o ml-pipeline não dispara aqui."""
 
-from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
 class Handler(BaseHTTPRequestHandler):
