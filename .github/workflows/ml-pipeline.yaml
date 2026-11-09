@@ -10,12 +10,27 @@ on:
       - 'Aula3/poetry.lock'
       - '.github/workflows/ml-pipeline.yaml'
 
+  repository_dispatch:
+    types:
+      - anomalia-detectada
 
 env:
   PYTHON_VERSION: '3.10'
 
 jobs:
+  anomalia-detect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recebendo o payload do Webhook
+        run: |
+          echo "Evento recebido de fora do Github!"
+          echo "Motivo: ${{ github.event.client_payload.motivo }}"
+          echo "Acurácia atual: ${{ github.event.client_payload.acuracia_atual }}"
+
+      - name: Iniciar Retreinamento
+        run: echo "Iniciando download dos dados novos e acionando instancias com GPU"
   preparando_dados:
+    needs: anomalia-detect # faz com que o job de preparação de dados só seja executado após a conclusão do job de detecção de anomalias
     runs-on: ubuntu-latest
     steps:
         - name: Checkout repository
