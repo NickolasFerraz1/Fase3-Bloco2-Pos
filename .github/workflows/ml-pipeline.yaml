@@ -9,6 +9,7 @@ on:
       - 'Aula3/pyproject.toml'
       - 'Aula3/poetry.lock'
       - '.github/workflows/ml-pipeline.yaml'
+      - 'Aula8/scripts/avaliar_desafiante.py'
 
   repository_dispatch:
     types:
@@ -63,6 +64,10 @@ jobs:
   treinamento:
     needs: preparando_dados # faz com que o job de treinamento só seja executado após a conclusão do job de preparação de dados
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4 #basicamente um git clone para o github
@@ -86,3 +91,25 @@ jobs:
 
       - name: Executar treinamento de teste
         run: python Aula7/src/models/teste.py dataset_processado.csv
+
+      - name: Executar a Batalha (Champion vs Challenger)
+        run: python Aula8/scripts/avaliar_desafiante.py
+
+      - name: Ler o Relatório Markdown
+        id: relatorio
+        run: |
+          conteudo=$(cat Aula8/relatorio.md)
+          echo "BODY<<EOF" >> $GITHUB_ENV
+          echo "$conteudo" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Criar Pull Request no GitHub com o Relatório
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Novo modelo treinado - Atualização de Arquitetura"
+          title: "[BOT] Atualização do modelo de fraude (Challenger Venceu)"
+          body: ${{ env.BODY }}
+          branch: bot-pr-model
+          base: "main"
+          labels: "mlops, machine-learning, automated-pr"
