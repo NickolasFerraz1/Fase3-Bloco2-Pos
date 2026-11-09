@@ -10,6 +10,7 @@ jobs:
     uses: NickolasFerraz1/Fase3-Bloco2-Pos-Integracao/.github/workflows/template-ci-ml.yml@main
     with:
       PYTHON_VERSION: '3.10'
-      path-tests: Aula4/tests/
+      working-directory: Aula4
+      path-tests: tests/
     secrets:
       TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
