@@ -23,12 +23,12 @@ def carregar_dataset(caminho: Path) -> list[dict]:
 
 def treinar(linhas: list[dict]) -> int:
     """'Treina' um modelo dummy: sempre prevê a classe mais comum."""
-    contagem = Counter(int(l["target"]) for l in linhas)
+    contagem = Counter(int(linha["target"]) for linha in linhas)
     return contagem.most_common(1)[0][0]
 
 
 def avaliar(modelo: int, linhas: list[dict]) -> float:
-    acertos = sum(1 for l in linhas if int(l["target"]) == modelo)
+    acertos = sum(1 for linha in linhas if int(linha["target"]) == modelo)
     return acertos / len(linhas)
 
 
