@@ -24,6 +24,11 @@ httpx = "^0.27.0"
 # de dentro da pasta Aula4 (como faz o ci.yaml, com working-directory: Aula4)
 pythonpath = [".."]
 
+[tool.ruff.lint.isort]
+# Rodando o ruff de dentro de Aula4, "Aula4" não é detectado como pacote
+# do projeto; isso mantém a ordem dos imports igual em qualquer pasta.
+known-first-party = ["Aula4"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
