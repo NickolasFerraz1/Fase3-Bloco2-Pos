@@ -8,11 +8,23 @@ Workflows reutilizáveis (`workflow_call`) para o CI e pipeline de treinamento d
 |---|---|
 | `ci-workflow-call-aula7.yaml` | Cópia do workflow da raiz (`.github/workflows/ci-workflow-call.yaml`): chama o template de CI do repositório `Fase3-Bloco2-Pos-Integracao` |
 | `ml-pipeline-aula7.yaml` | Cópia do workflow da raiz (`.github/workflows/ml-pipeline.yaml`): preparação de dados e treinamento de teste |
+| `ci-aula7.yaml` | Cópia do CI da raiz (`.github/workflows/ci.yaml`): validações de ambiente, lint, testes, treino do `.pkl` e auditoria MLOps |
+| `train.py` | Gera um modelo falso (`pickle`) em `outputs/dataset_processado.pkl`, usado pela auditoria do CI |
 | `src/models/teste.py` | Script de treinamento de teste, usado para disparar e validar o `ml-pipeline` |
 
 Na raiz também foram criados `backend/app.py` e `frontend/index.html`, só para conferir que mudanças fora de `Aula7/src/models/` não disparam o pipeline.
 
 ## Pipelines
+
+**`ci-aula7.yaml` / `.github/workflows/ci.yaml`** (ativo), disparado em `pull_request` para a `main`. Job `validacao_ambiente`:
+
+1. instala Poetry e Python 3.10 e roda `Aula1/validate_env.py`
+2. verifica com `nbstripout --verify` que `Aula2/explorer.ipynb` não tem outputs
+3. instala o Ruff na versão fixa `0.4.10` (a mesma dos `poetry.lock`) e roda `ruff check .` no repositório inteiro, por isso os arquivos novos da Aula7, do `backend/` e do `frontend/` também são checados
+4. Aula3: `poetry install`, ETL (`preparar_dados.py`), `dummy_train.py` e `dummy_train_governance.py`
+5. Aula4: `poetry install` e `pytest tests/`
+6. roda `python Aula7/train.py` para gerar o modelo `.pkl`
+7. **Auditoria MLOps:** usa a action `Fase3-Bloco2-Pos-Integracao/model-action@main` sobre `Aula7/outputs/dataset_processado.pkl`, com `nivel-alerta: 'WARNING'`
 
 **`ci-workflow-call-aula7.yaml` / `.github/workflows/ci-workflow-call.yaml`** (ativo), disparado em `push` na `main`:
 
@@ -40,4 +52,6 @@ O `teste.py` usa só a biblioteca padrão: lê o CSV, "treina" um modelo que sem
 - **Dados na Aula3:** o pipeline de ML usa o `pyproject.toml` e o `preparar_dados.py` da `Aula3/`, pois a `Aula7/` não tem esses arquivos.
 - **Treinamento simulado:** o `teste.py` não usa modelo real, serve apenas para validar o pipeline.
 - **Template em outro repositório:** o chamador usa `@main`. Mudanças no template só valem depois de commit e push na `main` do repositório `Fase3-Bloco2-Pos-Integracao`.
+- **`train.py` com erro:** `open(..., "wb", encoding="utf-8")` lança `ValueError`, porque o modo binário não aceita `encoding`. Basta remover o argumento.
+- **Caminho do modelo:** o CI roda `python Aula7/train.py` na raiz, e o script grava em `outputs/` relativo à pasta atual. O arquivo vai para `outputs/` na raiz, mas a auditoria procura em `Aula7/outputs/`. É preciso ajustar o caminho no `train.py` ou o `path-model`.
 - **Lint do CI:** rodando o ruff dentro de `Aula4/`, o pacote `Aula4` não é detectado como código do projeto. Por isso o `Aula4/pyproject.toml` ganhou `known-first-party = ["Aula4"]` em `[tool.ruff.lint.isort]`.
