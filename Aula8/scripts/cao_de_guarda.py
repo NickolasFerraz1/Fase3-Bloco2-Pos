@@ -8,6 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 def analisar_saude_promocao():
     logging.info("Analisando a saúde do modelo de promoção...")
+    concept_drift = False
 
     #1. VERIFICA DATA DRIFT
     # Ex: O ticket médio das transações aumentou por conta da inflação?
@@ -30,9 +31,11 @@ def analisar_saude_promocao():
     if acuracia_total < meta_acuracia:
         logging.error(f"Concept drift detectado! A acurácia do modelo caiu para {acuracia_total:.2f}, abaixo da meta de {meta_acuracia:.2f}.")
         logging.error("As regras de fraude mudaram. O modelo Apodreceu.")
+        concept_drift = True
 
     logging.info("Análise de saúde do modelo concluída.")
-    sys.exit(0)  # Indica que o script terminou com sucesso
+    # Data drift é só um alerta (exit 0); concept drift falha o job (exit 1)
+    sys.exit(1 if concept_drift else 0)
 
 if __name__ == "__main__":
     analisar_saude_promocao()
